@@ -1,0 +1,48 @@
+---
+- name: Create env file on target
+  template:
+    src: templates/postgres-env-file
+    dest: ~/postgres-env-file
+  tags:
+    - quay
+    - quay-config
+    - quay-worker
+    - redis
+    - database
+
+- name: Create {{ quay_root_dir }}/pgsql
+  file:
+    path: "{{ quay_root_dir }}/pgsql"
+    state: directory
+    mode: '0777'
+  tags:
+    - quay
+    - quay-config
+    - quay-worker
+    - redis
+    - database
+
+- name: Start Postgresql container
+  podman_container:
+    env_file: "~/postgres-env-file"
+    detach: yes
+    restart: yes
+    name: "{{ postgresql_container_name }}"
+    privileged: yes
+    published_ports: "5432:5432"
+    volumes: "{{ quay_root_dir }}/pgsql:/var/lib/pgsql/data:Z"
+    image: "{{ postgresql_image }}"
+  tags:
+    - postgres
+
+- name: sleep 10 seconds for Postgresql container to start
+  pause:
+    seconds: 10
+
+- name: add required PGSQL extension
+  postgresql_query:
+    login_host: "{{ inventory_hostname }}"
+    login_user: "postgres"
+    login_password: "{{ postgresql_admin_password }}"
+    db: "{{ postgresql_database }}"
+    query: "CREATE EXTENSION IF NOT EXISTS pg_trgm"

@@ -1,0 +1,23 @@
+- hosts: localhost
+  connection: local
+  become: false
+  tasks:
+    - name: Create Quay Repository Mirror
+      quay_mirror:
+        auth: "{{ lookup('env','QUAY_AUTH_TOKEN') }}"
+        name: audiohacked/ftb_base
+        state: enabled
+        external_reference: docker.com/audiohacked/ftb_base
+        root_rule:
+          rule_type: "TAG_GLOB_CSV"
+          rule_value: "latest,stable"
+        sync_start_date: "{{ ansible_date_time['iso8601'] }}"
+        sync_interval: 86400
+        robot_username: "audiohacked+mirror"
+        # external_registry_username: "{{ USERNAME }}"
+        # external_registry_password: "{{ PASSWORD }}"
+        # external_registry_config:
+        #   proxy:
+        #     https_proxy: ""
+        #     http_proxy: ""
+        #     no_proxy: ""

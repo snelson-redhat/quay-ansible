@@ -1,0 +1,4 @@
+POSTGRESQL_USER={{ postgresql_user }}
+POSTGRESQL_PASSWORD={{ postgresql_password }}
+POSTGRESQL_DATABASE={{ postgresql_database }}
+POSTGRESQL_ADMIN_PASSWORD={{ postgresql_admin_password }}

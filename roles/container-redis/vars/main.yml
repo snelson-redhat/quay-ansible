@@ -1,0 +1,3 @@
+---
+# vars file for ansible-role-containers-redis
+QUAY_REDIS_CONTAINERIZE: True

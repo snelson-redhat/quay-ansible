@@ -1,0 +1,41 @@
+---
+# vars file for ansible-role-containers-mysql
+
+# @var MYSQL_CONTAINER_NAME: 'mysql' # Name to apply to mysql container
+MYSQL_CONTAINER_NAME: "mysql"
+MYSQL_IMAGE: "registry.access.redhat.com/rhscl/mysql-57-rhel7"
+
+QUAY_MYSQL_DEPLOY: True
+QUAY_DATABASE_CONTAINERIZE: True
+
+# _quay_mysql_packages:
+#   default:
+#     - mariadb-server
+#     - mariadb-devel
+#     - python2-mysql
+#   Fedora:
+#     - mariadb-server
+#     - mariadb-devel
+#     - python2-mysql
+#   RedHat-7:
+#     - rh-mariadb103-scldevel.x86_64
+#     - rh-mariadb103-syspaths
+#     - MySQL-python
+#   CentOS-7:
+#     - mariadb-devel
+#     - mariadb-server
+#     - MySQL-python
+#   CentOS:
+#     - mysql-devel
+#     - mysql-server
+#     - python3-PyMySQL
+
+# _quay_mysql_service:
+#   default: mysql
+#   Alpine: mariadb
+#   Amazon: mariadb
+#   Amazon-2018: mysqld
+#   Archlinux: mariadb
+#   Fedora: mariadb
+#   RedHat-7: rh-mariadb103-mariadb
+#   RedHat: mysqld

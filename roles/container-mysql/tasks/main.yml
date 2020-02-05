@@ -1,0 +1,61 @@
+---
+# tasks file for ansible-role-containers-mysql
+# - name: Deploy docker to database container host
+#   include_tasks: tasks/deploy-docker.yml
+#   vars:
+#     docker_packages:
+#       - docker
+#       - python-docker-py
+#       - MySQL-python
+#   when: QUAY_DATABASE_CONTAINERIZE
+#   tags:
+#     - database
+
+# - name: Deploy MySQL python dependencies
+#   yum:
+#     name: MySQL-python
+#     state: latest
+#   when: not QUAY_DATABASE_CONTAINERIZE
+#   tags:
+#     - database
+
+- name: Configure firewall for MySQL
+  include_tasks: tasks/firewall-setup.yml
+  vars:
+    ports:
+      - 3306/tcp
+    firewall_zone: public
+    when: not QUAY_DATABASE_CONTAINERIZE
+  tags:
+    - database
+
+- name: Configure firewall for MySQL as a container
+  include_tasks: tasks/firewall-setup.yml
+  vars:
+    ports:
+      - 3306/tcp
+    firewall_zone: trusted
+    when: QUAY_DATABASE_CONTAINERIZE
+  tags:
+    - database
+
+- name: Deploy conatinerized mysql
+  include_tasks: tasks/deploy-mysql.yml
+  when: QUAY_DATABASE_CONTAINERIZE
+  tags:
+    - database
+
+- name: Deploy mysql
+  include_role:
+    name: robertdebock.mysql
+  vars:
+    _mysql_service: "{{ _quay_mysql_service }}"
+    _mysql_packages: "{{ _quay_mysql_packages }}"
+  when: not QUAY_DATABASE_CONTAINERIZE
+  tags:
+    - database
+
+- name: Test mysql
+  include_tasks: tasks/mysql-test.yml
+  tags:
+    - database

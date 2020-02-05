@@ -1,0 +1,22 @@
+---
+- name: Copy the quay certificate into clair
+  copy:
+    remote_src: yes
+    src: "{{ QUAY_ROOT_DIR }}/config/ssl.cert"
+    dest: "{{ QUAY_ROOT_DIR }}/clair/clair.crt"
+
+- name: Copy the quay key into clair
+  copy:
+    remote_src: yes
+    src: "{{ QUAY_ROOT_DIR }}/config/ssl.key"
+    dest: "{{ QUAY_ROOT_DIR }}/clair/clair.key"
+
+- name: "Check that ca certificate exists on quay host at {{ QUAY_ROOT_DIR }}/config/extra_ca_certs/ca.crt"
+  stat:
+    path: "{{ QUAY_ROOT_DIR }}/config/extra_ca_certs/ca.crt"
+  register: _ca_cert_exist
+
+- name: Fail if CA certificate doesn't exist
+  fail:
+    msg: "CA certificate not on host at {{ QUAY_ROOT_DIR }}/config/extra_ca_certs/ca.crt"
+  when: not _ca_cert_exist.stat.isreg

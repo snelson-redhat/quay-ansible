@@ -1,0 +1,44 @@
+---
+
+- name: "Sync images from {{ images }}"
+  hosts: quay
+  gather_facts: yes
+  vars:
+    QUAY_AUTH_TOKEN: "{{ QUAY_AUTH_TOKEN }}"
+    USERNAME: "{{ UPSTREAM_REGISTRY_USERNAME }}"
+    PASSWORD: "{{ UPSTREAM_REGISTRY_PASSWORD }}"
+  vars_files:
+     - "{{ images }}"
+  tasks:
+    - name: Create repo
+      quay_repo:
+        auth: "{{ QUAY_AUTH_TOKEN }}"
+        endpoint: "{{ QUAY_ENDPOINT }}"
+        validate_certs: no
+        name: "{{ item.image }}"
+        state: present
+      with_items: "{{ docker_images }}"
+      register: result
+      ignore_errors: true
+
+    - name: Create mirrors
+      quay_mirror:
+        auth: "{{ QUAY_AUTH_TOKEN }}"
+        endpoint: "{{ QUAY_ENDPOINT }}"
+        validate_certs: no
+        name: "{{ item.image }}"
+        external_reference: "{{ item.src_registry }}/{{ item.image }}"
+        external_registry_username: "{{ USERNAME }}"
+        external_registry_password: "{{ PASSWORD }}"
+        external_registry_config:
+          proxy:
+            https_proxy: ""
+            http_proxy: ""
+            no_proxy: ""
+        sync_start_date: "{{ ansible_date_time['iso8601'] }}"
+        root_rule:
+          rule_type: "TAG_GLOB_CSV"
+          rule_value: "{{ item.tags }}"
+        sync_interval: 86400
+        robot_username: "{{ item.image.split('/')[0] }}+mirror"
+      with_items: "{{ docker_images }}"

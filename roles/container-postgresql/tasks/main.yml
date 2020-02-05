@@ -1,0 +1,23 @@
+---
+# tasks file for ansible-role-containers-postgresql
+# - name: Install postgres pre-reqs
+#   yum:
+#     name: python-psycopg2
+#     state: latest
+#   when: not QUAY_DATABASE_CONTAINERIZE
+#   tags:
+#     - database
+
+- name: Configure firewall for PostgreSQL as a container
+  include_tasks: tasks/firewall-setup.yml
+  vars:
+    ports:
+      - 5432/tcp
+    firewall_zone: trusted
+  tags:
+    - database
+
+- name: Deploy PostgreSQL
+  include_tasks: tasks/deploy-postgresql.yml
+  tags:
+    - database

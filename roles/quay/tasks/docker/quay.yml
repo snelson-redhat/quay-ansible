@@ -1,0 +1,49 @@
+---
+- name: ensure that quay config is stopped
+  docker_container:
+    name: quay-config
+    state: stopped
+  ignore_errors: true
+  tags:
+    - quay
+
+- name: "create quay config directory"
+  file:
+    state: directory
+    path: "{{ quay_root_dir }}/config"
+  tags:
+    - quay
+
+- name: "create quay storage directory (when object storage is not available)"
+  file:
+    state: directory
+    path: "{{ quay_root_dir }}/storage"
+  when: not quay_object_storage and quay_object_storage is defined
+  tags:
+    - quay
+
+- name: copy the tarball to the quay host
+  unarchive:
+    src: "{{ quay_config_tar }}"
+    dest: "{{ quay_root_dir }}/config/"
+    copy: yes
+  tags:
+    - quay
+    - deploy-config
+
+- name: start quay
+  docker_container:
+    detach: yes
+    restart: yes
+    name: "quay"
+    privileged: yes
+    sysctls: { net.core.somaxconn: 4096 }
+    published_ports:
+      - "{{ quay_http_port }}:8080"
+      - "{{ quay_https_port }}:8443"
+    image: "{{ quay_image_version }}"
+    volumes:
+      - "{{ quay_root_dir }}/config:/conf/stack:z"
+      - "{{ quay_root_dir }}/storage:/datastorage:z"
+  tags:
+    - quay

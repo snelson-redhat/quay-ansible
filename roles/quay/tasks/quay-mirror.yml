@@ -1,0 +1,26 @@
+---
+# - name: Start quay repository mirror worker
+#   docker_container:
+#     detach: yes
+#     restart: yes
+#     name: "mirroring-worker"
+#     privileged: no
+#     image: "{{ QUAY_IMAGE_VERSION }}"
+#     volumes:
+#       - "{{ QUAY_ROOT_DIR }}/config:/conf/stack:Z"
+#     command: "repomirror"
+#   tags:
+#     - quay-worker
+
+- name: Start quay repository mirror worker
+  podman_container:
+    detach: yes
+    restart: yes
+    name: "mirroring-worker"
+    privileged: no
+    image: "{{ QUAY_IMAGE_VERSION }}"
+    volumes:
+      - "{{ QUAY_ROOT_DIR }}/config:/conf/stack:Z"
+    command: "repomirror"
+  tags:
+    - quay-worker

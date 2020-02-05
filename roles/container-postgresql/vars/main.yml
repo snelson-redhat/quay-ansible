@@ -1,0 +1,6 @@
+---
+# vars file for ansible-role-containers-postgresql
+postgresql_container_name: "postgresql"
+postgresql_image: registry.access.redhat.com/rhscl/postgresql-96-rhel7
+
+quay_database_containerize: True

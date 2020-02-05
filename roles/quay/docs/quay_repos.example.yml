@@ -1,0 +1,25 @@
+- hosts: localhost
+  connection: local
+  become: false
+  tasks:
+    - name: Create Quay Repository
+      quay_repo:
+        auth: "{{ lookup('env','QUAY_AUTH_TOKEN') }}"
+        name: audiohacked/ftb_base
+        state: present
+      register: new_repo
+
+    - debug:
+        msg: "{{ new_repo.data }}"
+        verbosity: 3
+
+    - name: Delete Quay Repository
+      quay_repo:
+        auth: "{{ lookup('env','QUAY_AUTH_TOKEN') }}"
+        name: audiohacked/ftb_base
+        state: absent
+      register: bye_repo
+
+    - debug:
+        msg: "{{ bye_repo.data }}"
+        verbosity: 3

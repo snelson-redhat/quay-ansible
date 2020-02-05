@@ -1,16 +1,34 @@
 ---
-# defaults file for quay-ansible
+# Copy this file to your group or host vars and update
 
 # @var docker_login_quay: "undefined" # This optional value is pulled from the Red Hat solution to access quay images and the value is the entire login command such as: docker login -u='REDHAT_QUAY_USER' -p='LONG_UUID_STRING' quay.io"
 # docker_login_quay:
 
 # @var docker_login_redhat: "docker login -u='{{ UPSTREAM_REGISTRY_USERNAME}}' -p='{{ UPSTREAM_REGISTRY_PASSWORD }}' https://registry.redhat.io" # Command to access the Red Hat registry, built with UPSTREAM_REGISTRY_USERNAME and UPSTREAM_REGISTRY_PASSWORD variables
-docker_login_redhat: docker login -u='{{ UPSTREAM_REGISTRY_USERNAME}}' -p='{{ UPSTREAM_REGISTRY_PASSWORD }}
+# docker_login_redhat: docker login -u='{{ UPSTREAM_REGISTRY_USERNAME}}' -p='{{ UPSTREAM_REGISTRY_PASSWORD }}
+
+# @var QUAY_IO_REGISTRY_URL: "quay.io" # The registry where the quay image is hosted
+QUAY_IO_REGISTRY_URL: "quay.io"
+
+# @var QUAY_IO_USERNAME: "pull_from_rh_solution" # Connection details provided in the Red Hat solution above
+QUAY_IO_USERNAME: ""
+
+# @var QUAY_IO_PASSWORD: "pull_from_rh_solution" # Connection details provided in the Red Hat solution above
+QUAY_IO_PASSWORD: ""
+
+# @var UPSTREAM_REGISTRY_URL: "https://registry.redhat.io" # Url to Red Hat Registry
+UPSTREAM_REGISTRY_URL: "registry.redhat.io"
+
+# @var UPSTREAM_REGISTRY_USERNAME: "numbers|username" # Credentials from Red Hat Containers page
+UPSTREAM_REGISTRY_USERNAME: ""
+
+# @var UPSTREAM_REGISTRY_PASSWORD: "vault encrypted string" # Credentials from Red Hat Containers page (suggest encrypting with ansible vault)
+UPSTREAM_REGISTRY_PASSWORD: ""
 
 ### Generic Database ###
 # @todo containerized database testing
 # @var QUAY_DATABASE_CONTAINERIZE: false # Boolean if databases should be deployed as RPMs or Containers
-QUAY_DATABASE_CONTAINERIZE: false
+QUAY_DATABASE_CONTAINERIZE: true
 
 ### MySQL ###
 # @var QUAY_MYSQL_DEPLOY: true # Boolean on if mysql should be deployed for Quay
@@ -50,7 +68,7 @@ postgresql_user: postgres
 
 ### Quay ###
 # @var QUAY_ENDPOINT: "quay-server.example.com" # The FQDN for your quay system
-QUAY_ENDPOINT: quay-server.example.com
+QUAY_ENDPOINT: quay.example.com
 
 # @var QUAY_CONFIG_PASSWORD: 'changeme' # The password for the quay config UI
 QUAY_CONFIG_PASSWORD: changeme
@@ -72,7 +90,7 @@ QUAY_HTTPS_PORT: 443
 CLAIR_ENDPOINT: "{{ QUAY_ENDPOINT }}"
 
 # @var CLAIR_ENCRYPT: true # Boolean on if Clair should run on TLS
-CLAIR_ENCRYPT: true
+CLAIR_ENCRYPT: false
 
 # This isn't currently used but may be used in the future
 # @var quay_organization_ca_cert: '/etc/ipa/ca.crt' # ONLY USED FOR AUTOMATED TESTING Path to your organizations CA chain

@@ -1,0 +1,25 @@
+[quay_database]
+localhost
+
+[quay_redis]
+localhost
+
+[quay_nfs]
+localhost
+
+[quay]
+localhost ansible_connection=local
+
+[quay_systems:children]
+quay_database
+quay_redis
+quay_nfs
+quay
+
+[quay_systems:vars]
+container_runtime="podman"
+quay_config_tar="../../files/quay-config.tar.gz"
+quay_config=false
+quay_object_storage=false
+with_clair=true
+clair_service_key_id='27c0295e01f1cee08b8cb23825d1a162ee6aedba2b593d9b47003b408b76754c'
